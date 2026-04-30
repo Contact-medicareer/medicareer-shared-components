@@ -1,0 +1,143 @@
+---
+// BaseFooter — メディキャリ全サイト共通フッター
+// 設計：ダーク背景 (ink-navy) + 4列グリッド（columns 配列で制御）
+// シンプル運用したい LP 向けに `simple` モードもサポート
+//
+// Props:
+// - brandName:      フッター左カラムに表示するブランド名（'メディキャリ' | '株式会社Contact' など）
+// - brandTagline:   ブランド説明テキスト（HTML可・<br/> も使える）
+// - columns:        追加カラム配列 [{ title, links: [{ label, href, external? }] }]
+// - copyrightLeft:  © 表記（デフォルト '© {year} Contact, Inc. All rights reserved.'）
+// - copyrightRight: 右側の任意テキスト（'MediCareer' | 'Founded 2022 in Karuizawa, Japan' など）
+// - simple:         true の場合 1列シンプル表示（agent-lp 向け）
+// - simpleLinks:    simple モード時のリンク [{ label, href }]
+// - subTitle:       simple モード時のサブタイトル（'〇〇職向けキャリア支援LP' など）
+//
+// Example (4列モード):
+// <BaseFooter
+//   brandName="メディキャリ"
+//   brandTagline="医療職特化のキャリア支援。<br/>学ぶ・相談する・転職する。"
+//   columns={[
+//     { title: 'サービス', links: [{ label: 'メディキャリ大学', href: '...', external: true }] },
+//     { title: '会社情報', links: [...] },
+//     { title: '法的情報', links: [...] }
+//   ]}
+//   copyrightRight="MediCareer"
+// />
+//
+// Example (simple モード):
+// <BaseFooter simple brandName="メディキャリエージェント" subTitle="看護師向けLP" simpleLinks={[...]} />
+
+interface Link {
+  label: string;
+  href: string;
+  external?: boolean;
+}
+
+interface Column {
+  title: string;
+  links: Link[];
+}
+
+interface Props {
+  brandName?: string;
+  brandTagline?: string;
+  columns?: Column[];
+  copyrightLeft?: string;
+  copyrightRight?: string;
+  simple?: boolean;
+  simpleLinks?: Link[];
+  subTitle?: string;
+}
+
+const year = new Date().getFullYear();
+
+const {
+  brandName = 'メディキャリ',
+  brandTagline = '医療職特化のキャリア支援。<br/>学ぶ・相談する・転職する。',
+  columns = [],
+  copyrightLeft = `© ${year} Contact, Inc. All rights reserved.`,
+  copyrightRight = 'MediCareer',
+  simple = false,
+  simpleLinks = [],
+  subTitle = '',
+} = Astro.props;
+
+// グリッド列数（左ブランド + 追加カラム数）
+const gridCols = columns.length === 3 ? 'md:grid-cols-4'
+  : columns.length === 2 ? 'md:grid-cols-3'
+  : columns.length === 1 ? 'md:grid-cols-2'
+  : 'md:grid-cols-1';
+---
+
+{simple ? (
+  <footer class="px-6 py-8 bg-[var(--color-ink-navy)] text-[var(--color-outline-variant)] text-xs">
+    <div class="font-medium text-white text-sm mb-1">
+      {brandName}
+    </div>
+    {subTitle && (
+      <div class="opacity-70 mb-3">
+        {subTitle}
+      </div>
+    )}
+    <div class="opacity-60 mb-4">運営：株式会社Contact</div>
+
+    {simpleLinks.length > 0 && (
+      <div class="flex flex-wrap gap-x-4 gap-y-2 mb-4">
+        {simpleLinks.map((link) => (
+          <a
+            href={link.href}
+            class="underline opacity-90 hover:opacity-100"
+            target={link.external ? '_blank' : undefined}
+            rel={link.external ? 'noopener' : undefined}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    )}
+
+    <div class="text-[10px] opacity-60">
+      © {year} 株式会社Contact. All Rights Reserved.
+    </div>
+  </footer>
+) : (
+  <footer class="bg-[var(--color-ink-navy)] text-white">
+    <div class="mx-auto max-w-[1200px] px-6 py-16">
+      <div class={`grid grid-cols-1 ${gridCols} gap-10 mb-10`}>
+        <!-- ブランド -->
+        <div class="md:col-span-1">
+          <h4 class="text-base font-medium mb-3 text-white">{brandName}</h4>
+          <p class="text-sm text-white/70 leading-relaxed" set:html={brandTagline} />
+        </div>
+
+        {columns.map((col) => (
+          <div>
+            <h4 class="text-sm font-medium mb-3 text-white/90">{col.title}</h4>
+            <ul class="space-y-2 text-sm text-white/70">
+              {col.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="hover:text-white transition-colors"
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div
+        class="border-t border-white/15 pt-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-2"
+      >
+        <span class="text-xs text-white/50">{copyrightLeft}</span>
+        <span class="text-xs text-white/40 font-en">{copyrightRight}</span>
+      </div>
+    </div>
+  </footer>
+)}

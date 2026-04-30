@@ -1,0 +1,47 @@
+---
+// Logo — 共通ロゴシンボル + テキストブランド名
+// ブランド色のスクエアシンボル（M / C など）+ サイト名を横並び
+//
+// Props:
+// - href:        ロゴクリック先（デフォルト '/'）
+// - symbol:      シンボル文字（'M' | 'C' など）
+// - siteName:    サイト名（'メディキャリ' | 'Contact' など）
+// - bgColor:     シンボル背景色（CSS変数 'var(--color-medicareer-blue)' など）
+// - hoverColor:  ホバー時のテキスト色（CSS変数）
+// - textColor:   テキスト色（CSS変数 デフォルト ink-navy）
+
+interface Props {
+  href?: string;
+  symbol?: string;
+  siteName?: string;
+  bgColor?: string;
+  hoverColor?: string;
+  textColor?: string;
+}
+
+const {
+  href = '/',
+  symbol = 'M',
+  siteName = 'メディキャリ',
+  bgColor = 'var(--color-medicareer-blue)',
+  hoverColor = 'var(--color-medicareer-blue)',
+  textColor = 'var(--color-ink-navy)',
+} = Astro.props;
+---
+
+<a
+  href={href}
+  class="flex items-center gap-2 text-lg font-medium transition-colors"
+  style={`color: ${textColor};`}
+  data-hover-color={hoverColor}
+  onmouseover={`this.style.color='${hoverColor}'`}
+  onmouseout={`this.style.color='${textColor}'`}
+>
+  <span
+    class="inline-flex items-center justify-center w-8 h-8 rounded-md text-white font-medium text-sm font-en"
+    style={`background-color: ${bgColor};`}
+  >
+    {symbol}
+  </span>
+  <span>{siteName}</span>
+</a>

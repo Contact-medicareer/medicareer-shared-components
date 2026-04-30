@@ -1,0 +1,88 @@
+---
+// BaseLayout — メディキャリ全サイト共通の HTML 雛形
+// フォント読み込み + メタタグ + OGP を共通化
+//
+// 注意：global.css は各サイト側で個別にインポートする運用を推奨。
+//       理由：sites ごとにトークン値・カスタムクラスが異なるため。
+//       本 Layout に <slot name="head" /> を用意したので、各サイトは
+//       <BaseLayout slot="head"><link rel="stylesheet" .../></BaseLayout> で追加可能。
+//
+// Props:
+// - title:        ページタイトル（必須）
+// - description:  meta description
+// - lang:         html lang 属性（デフォルト 'ja'）
+// - themeColor:   meta theme-color（モバイルブラウザ色・デフォルト '#1E50A2'）
+// - ogImage:      OGP 画像 URL（デフォルト '/og-default.png'）
+// - faviconHref:  favicon パス（デフォルト '/favicon.svg'）
+// - bodyClass:    <body> に追加する class
+// - mainClass:    <main> に追加する class（'lp-shell' など）
+//
+// Example:
+// <BaseLayout title="メディキャリ" description="..." themeColor="#1E50A2">
+//   <slot name="head" />  ←任意の追加 head 要素
+//   <Header ... />
+//   <slot />
+//   <Footer ... />
+// </BaseLayout>
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: string;
+  themeColor?: string;
+  ogImage?: string;
+  faviconHref?: string;
+  bodyClass?: string;
+  mainClass?: string;
+}
+
+const {
+  title,
+  description = '医療職特化のキャリア支援。学ぶ・相談する・転職する。',
+  lang = 'ja',
+  themeColor = '#1E50A2',
+  ogImage = '/og-default.png',
+  faviconHref = '/favicon.svg',
+  bodyClass = 'font-sans antialiased',
+  mainClass = '',
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
+
+    <!-- OGP -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google Fonts: Zen Kaku Gothic New + Inter（メディキャリ標準） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <slot name="head" />
+
+    <title>{title}</title>
+  </head>
+  <body class={bodyClass}>
+    {mainClass ? (
+      <main class={mainClass}>
+        <slot />
+      </main>
+    ) : (
+      <slot />
+    )}
+  </body>
+</html>

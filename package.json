@@ -1,0 +1,27 @@
+{
+  "name": "medicareer-shared-components",
+  "version": "1.0.0",
+  "description": "メディキャリ全サイト共通の Astro コンポーネント（Header / Footer / Layout 等）。brand-v2 / corp-v2 / agent-lp-v2 で共通利用。",
+  "main": "index.js",
+  "files": [
+    "components/",
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "medicareer",
+    "components",
+    "astro",
+    "shared"
+  ],
+  "author": "Contact Inc. <ryunosuke.yoda@contact.ne.jp>",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Contact-medicareer/medicareer-shared-components.git"
+  },
+  "private": false,
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  }
+}

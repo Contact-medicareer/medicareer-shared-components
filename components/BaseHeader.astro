@@ -1,0 +1,97 @@
+---
+// BaseHeader — メディキャリ全サイト共通ヘッダー
+// 設計：白背景 + sticky top + 細アウトライン
+// ロゴ(左) + nav(中右) + 任意の CTA pill(右端)
+//
+// Props:
+// - logoHref:     ロゴリンク先（デフォルト '/'）
+// - logoSymbol:   ロゴシンボル文字（'M' | 'C' など）
+// - siteName:     サイト名（テキスト部分）
+// - primaryColor: ブランドメイン色 CSS変数（'var(--color-medicareer-blue)' or 'var(--color-revolution-red)'）
+// - navItems:     ナビ項目配列 [{ label, href }]
+// - cta:          任意の CTA ボタン { label, href, hoverBg } (省略可)
+//
+// Example:
+// <BaseHeader
+//   logoSymbol="M"
+//   siteName="メディキャリ"
+//   primaryColor="var(--color-medicareer-blue)"
+//   navItems={[
+//     { label: 'メディキャリとは', href: '#why' },
+//     { label: 'サービス', href: '#services' },
+//   ]}
+// />
+
+import Logo from './Logo.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface CTA {
+  label: string;
+  href: string;
+  hoverBg?: string;
+}
+
+interface Props {
+  logoHref?: string;
+  logoSymbol?: string;
+  siteName?: string;
+  primaryColor?: string;
+  navItems?: NavItem[];
+  cta?: CTA | null;
+}
+
+const {
+  logoHref = '/',
+  logoSymbol = 'M',
+  siteName = 'メディキャリ',
+  primaryColor = 'var(--color-medicareer-blue)',
+  navItems = [],
+  cta = null,
+} = Astro.props;
+---
+
+<header
+  class="bg-white/95 backdrop-blur-md border-b border-[var(--color-outline-variant)] sticky top-0 z-50"
+>
+  <div class="mx-auto max-w-[1200px] px-6 py-4 flex justify-between items-center">
+    <Logo
+      href={logoHref}
+      symbol={logoSymbol}
+      siteName={siteName}
+      bgColor={primaryColor}
+      hoverColor={primaryColor}
+    />
+    <nav class="hidden md:flex items-center gap-7 text-sm">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class="text-[var(--color-on-surface)] transition-colors"
+            style={`--hover-color: ${primaryColor};`}
+            onmouseover={`this.style.color='${primaryColor}'`}
+            onmouseout={`this.style.color=''`}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      {
+        cta && (
+          <a
+            href={cta.href}
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white rounded-full transition-colors"
+            style={`background-color: ${primaryColor};`}
+            onmouseover={`this.style.backgroundColor='${cta.hoverBg ?? primaryColor}'`}
+            onmouseout={`this.style.backgroundColor='${primaryColor}'`}
+          >
+            {cta.label}
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</header>
